@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+    <head>
+        <title>BirdHub</title>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icon.ico') }}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    </head>
+    <body>
+        <header>
+            <h1>BirdHub</h1>
+        </header>
+        <section class="picture-panel">
+            <div id="image">
+                <img src="{{ url_for('static', filename=photo['photo_name']) }}"/>
+            </div>
+            <div id="picture-panel-buttons">
+                <button onClick="window.location.reload();">
+                    <a><i class="material-icons">refresh</i>
+                    </a>
+                </button>
+                <button>
+                    <a href="/takePicture"><i class="material-icons">photo_camera</i></a>
+                </button>
+            </div>
+        </section>      
+        <section class="row">
+        <div class="panel">
+            <div class="card">
+                <div id="refill">
+                    <p>Refill!</p>
+                    <button><a href="/replenish/water">WATER</a></button>
+                    <button><a id="lui" class="ancora" href="/replenish/food">FOOD</a></button>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="card">
+                <div>
+                    <p>Customize the time intervals!</p>
+                    <form method="post" action="/setCheckTime/">
+                        <input name="check-time" type="text">
+                        <button type="submit">SET CHECK TIME</button>
+                      </form>
+                      <form method="post" action="/setPumpTime/">
+                        <input name="pump-time" type="text">
+                        <button type="submit">SET PUMP TIME</button>
+                      </form>
+                      </br>
+                </div>
+            </div>
+        </div>
+        </section>
+        <section class="row">
+        <div class="panel">
+            <div class="card">
+                <div><p>Calibrate the scale!</p>
+                    <form method="post" action="/calibrate/">
+                        
+                            <input name="known-weight" type="text">
+                            <button type="submit">CALIBRATE</button>
+                            <button id="bottonepronto" type="submit" name="button">DONE!</button>
+                        
+                      </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="card">
+                <div>
+                    <p>Use another recipient!</p>
+                <button>
+                    <a class="ancora" href="/tare">TARA</a>
+                </button>
+            </div>
+        </div>
+        <br>
+    </section> 
+        <footer>
+
+                <div>Universit&agrave; degli studi di Salerno, DIEM A.A 21/22 </div>
+                <div>AMENDOLA Miriam, Battipaglia Valerio, Caso Antonio</div>
+        </footer>
+    </body>
+</html>

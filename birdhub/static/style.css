@@ -1,0 +1,134 @@
+html, body { 
+  padding: 0; margin: 0; 
+  width: 100%;
+  background-color:#F6F7F8;  
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif;      
+}
+
+h1 {
+    background-color: #0e0a32;
+    color: whitesmoke;
+    text-align: left;
+    /* da vedere */
+    margin: 0%;
+    font-size: 250%;
+    padding: 2%;
+    border-style: ridge;
+    border-color: darkblue;
+}
+
+img {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+#image {
+  text-align: center;
+}
+
+#refill{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.picture-panel {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  height: 50vh;
+}
+
+.row{
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.panel { 
+  flex-shrink: 50%;
+  width: 30%;
+  margin: 1em 1em;
+  border-radius: 3px;
+  padding: 1em;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  
+}
+
+.card{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+p {
+  margin: 0;
+}
+
+#picture-panel-buttons{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1em;
+}
+
+a:link{
+  text-decoration: none;
+  color: white;
+}
+
+button {
+    background-color: #57A0D3; 
+    border: none;
+    color: whitesmoke;  
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 1em;
+    text-align: center;
+  }
+
+  input[type=text], select {
+    width: 50%;
+    padding: 3% 5%;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+body::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+body::-webkit-scrollbar-track {
+  background: #1C2951;        /* color of the tracking area */
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #0e0a32;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 3px solid #0e0a32;  /* creates padding around scroll thumb */
+}
+
+footer {
+    color:black;
+    font-size: large;
+    padding: 0.005%;
+    text-align: center;
+    bottom: 0;
+    clear:both;
+    box-shadow: 5px 5px 20px 0px #000000;
+    border-width: 2px;
+    border: gray;
+    border-radius: 2%;
+    
+  }
+
+img{
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
