@@ -1,30 +1,26 @@
-import os
-from pydoc import cli
+from msilib.schema import File
+import os, json
 
-from flask import Flask, flash, redirect, request
+from flask import Flask
 from . import db
 
 from paho.mqtt import client
 
 HOST = "test.mosquitto.org"
-mqtt = client.Client()
+mqtt = client.Client(userdata="Birdhub Server")
 
 def on_publish(client,userdata,mid):
     print("User", str(userdata), "has published something")
-    pass
-
-mqtt.subscribe("birdhub/loadCell/+")
-
-
 
 mqtt.connect(HOST,1883,60)
-mqtt.subscribe("birdhub/loadCell/+")
-mqtt.subscribe("birdhub/loadCell")
 
 mqtt.on_publish = on_publish
 
 # starting listening for messages
 mqtt.loop_start()
+
+with open(os.getcwd() + "\\birdhub\\static\\config.json", "r") as fp:
+    mqtt.publish("birdhub/parameters/config", fp.read(), retain=True)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -46,15 +42,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
     
     db.init_app(app)
+
     from . import home
     app.register_blueprint(home.bp)
     app.add_url_rule('/', endpoint='index')
-        
     return app

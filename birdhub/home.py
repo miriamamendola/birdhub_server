@@ -1,74 +1,49 @@
-from django.shortcuts import render
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
-)
-from werkzeug.exceptions import abort
+from flask import (Blueprint, render_template, request)
 
 from birdhub.db import get_db
 
 bp = Blueprint('home', __name__)
 from . import mqtt
 
-def on_message(client, userdata, message):
-    print("[" + str(message.topic) + "]:" +  message.payload.decode("utf-8"))
-    
-    if message.payload.decode("utf-8") == 'PlaceWeight':
-        print("Redirecting")
-        return redirect('/flash')
+def get_last_photo():
+    return get_db().execute(
+            'SELECT p.photo_name FROM photo p ORDER BY p.photo_id DESC LIMIT 1'
+        ).fetchone()
 
-mqtt.on_message = on_message
-
-@bp.route('/flash')
-def flash():
-    print("aaaa")
-    return render_template('base.html')
-
+### ENDPOINTS ###
 @bp.route('/tare')
 def tare():
-    mqtt.publish("birdhub/loadCell/tare", "tare")
-    return render_template('base.html')
+    mqtt.publish("birdhub/loadCell/tare", "tare", qos=1)
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
 
-#TODO 
 @bp.route('/calibrate/', methods=('GET', 'POST'))
-def get_known_weight():
+def calibrate():
     known_weight = request.form['known-weight']
-    return redirect(known_weight)
-
-#TODO 
-@bp.route('/calibrate/ready')
-def send_ready():
-    mqtt.publish("birdhub/loadCell/calibration", 'ACK')
-    return render_template('base.html')
-
-@bp.route('/calibrate/<known_weight>', methods=('GET', 'POST'))
-def start_calibration(known_weight):
-    mqtt.publish("birdhub/loadCell/calibration", known_weight)
-    return render_template('base.html')
+    mqtt.publish("birdhub/loadCell/calibration", known_weight, qos=1)
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
 
 @bp.route('/replenish/<supply>')
 def replenish(supply):
-    mqtt.publish("birdhub/replenish", supply)
-    return render_template('base.html')
+    mqtt.publish("birdhub/replenish", supply, qos=2)
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
 
-@bp.route('/setCheckTime/<time>')
-def set_check_time(time):
-    mqtt.publish("birdhub/setCheckTime", str(time))
-    return render_template('base.html')
-
-@bp.route('/setCheckTime/', methods=('GET', 'POST'))
-def get_check_time():
-    time = request.form['check-time']
-    return redirect(time)
-
-@bp.route('/setPumpTime/<time>')
-def set_pump_time(time):
-    mqtt.publish("birdhub/setPumpTime", str(time))
-    return render_template('base.html')
+@bp.route('/setAngle/', methods=('GET', 'POST'))
+def set_angle():
+    angle = request.form['angle']
+    mqtt.publish("birdhub/parameters/setAngle", str(angle), qos=2)
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
 
 @bp.route('/setPumpTime/', methods=('GET', 'POST'))
-def get_pump_time():
+def set_pump_time():
     time = request.form['pump-time']
-    return redirect(time)
+    mqtt.publish("birdhub/parameters/setPumpTime", str(time))
+
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
 
 @bp.route('/cam', methods=('GET', 'POST'))
 def get_data():
@@ -83,6 +58,7 @@ def get_data():
         print(last_id)
 
         photo_name = '/images/' + base_name + str(last_id[0]).zfill(3) + ".jpg"
+        
         with open('./birdhub/static' + photo_name, 'wb') as file:
             file.write(request.data)
 
@@ -95,46 +71,25 @@ def get_data():
     return 'Got data'
 
 
-
-
-def get_last_photo():
-    return get_db().execute(
-            'SELECT p.photo_name FROM photo p ORDER BY p.photo_id DESC LIMIT 1'
-        ).fetchone()
-    
-
-@bp.route('/takePicture')
+@bp.route('/takePhoto')
 def take_photo():
-    mqtt.publish("birdhub/cam", "photo")
-    return render_template('base.html')
+    mqtt.publish("birdhub/cam/takePhoto", "photo")
+    photo_name = get_last_photo()
+    return render_template('base.html', photo=photo_name)
+
+@bp.route('/config', methods=('GET', 'POST'))
+def save_config():
+    if request.method == 'GET':
+        with open("./birdhub/static/config.json", "rb") as f:
+            return f.read()
+    if request.method == 'POST':
+        config_string = request.data
+        with open("./birdhub/static/config.json", "wb") as f:
+            f.write(config_string)
+            return 'OK'
+
 
 @bp.route('/')
 def index():
     photo_name = get_last_photo()
     return render_template('base.html', photo=photo_name)
-
-
-""" @bp.route('/create', methods=('GET', 'POST'))
-def create():
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
-
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
-            return redirect(url_for('blog.index'))
-
-    return render_template('blog/create.html')
- """

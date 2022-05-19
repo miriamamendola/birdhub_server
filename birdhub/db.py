@@ -37,17 +37,20 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
-# TODO
-@click.command('populate-db')
+@click.command('clear-images')
 @with_appcontext
-def populate_db_from_folder():
-    print(current_app.root_path)
+def clear_images_command():
+    image_path = current_app.root_path + '\\static\\images\\'
+    dir = os.listdir(image_path)
+
+    for image in dir:
+        if image != "bird000.jpg":
+            os.remove(image_path + image)
     
-    # images = os.listdir(os.getcwd() + 'birdhub/static/images/')
-    
-    click.echo('Db populated.')
+    init_db()
+    click.echo('Images folder cleared and DB cleared.')
 
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
-    app.cli.add_command(populate_db_from_folder)
+    app.cli.add_command(clear_images_command)

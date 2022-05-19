@@ -5,6 +5,5 @@ CREATE TABLE photo (
   photo_ts TIMESTAMP UNIQUE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   photo_name TEXT UNIQUE NOT NULL
 );
-/* filename =bird+id */
 
 INSERT INTO photo (photo_name) VALUES ('/images/bird000.jpg');  
